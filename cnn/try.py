@@ -1,6 +1,9 @@
 print('hello world')
 import torch
 use_cuda = torch.cuda.is_available()
+
+device = torch.device("cuda" if use_cuda else "cpu")
+print("Device: ",device)
 if use_cuda:
     print('__CUDNN VERSION:', torch.backends.cudnn.version())
     print('__Number CUDA Devices:', torch.cuda.device_count())
