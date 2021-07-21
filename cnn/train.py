@@ -15,10 +15,11 @@ import torch.backends.cudnn as cudnn
 
 from torch.autograd import Variable
 from model import NetworkCIFAR as Network
+from torchvision import transforms, datasets, models
 
 
 parser = argparse.ArgumentParser("cifar")
-parser.add_argument('--data', type=str, default='../data', help='location of the data corpus')
+parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
 parser.add_argument('--batch_size', type=int, default=96, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
@@ -50,7 +51,7 @@ fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
 fh.setFormatter(logging.Formatter(log_format))
 logging.getLogger().addHandler(fh)
 
-CIFAR_CLASSES = 10
+CIFAR_CLASSES = 2
 
 
 def main():
@@ -83,8 +84,25 @@ def main():
       )
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
-  train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+  # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
+  # valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+
+  datadir=args.data
+  print(datadir)
+  traindir = datadir + '/train/'
+  validdir = datadir + '/val/'
+  testdir = datadir + '/test/'
+  data = {
+  'train':
+  datasets.ImageFolder(root=traindir, transform=train_transform),
+  'val':
+  datasets.ImageFolder(root=validdir, transform=train_transform),
+  'test':
+  datasets.ImageFolder(root=testdir, transform=train_transform)
+}
+
+  train_data=data['train']
+  valid_data=data['val']
 
   train_queue = torch.utils.data.DataLoader(
       train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
@@ -128,7 +146,7 @@ def train(train_queue, model, criterion, optimizer):
     nn.utils.clip_grad_norm(model.parameters(), args.grad_clip)
     optimizer.step()
 
-    prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))
+    prec1, prec5 = utils.accuracy(logits, target, topk=(1, 1))
     n = input.size(0)
     objs.update(loss.data[0], n)
     top1.update(prec1.data[0], n)
@@ -153,7 +171,7 @@ def infer(valid_queue, model, criterion):
     logits, _ = model(input)
     loss = criterion(logits, target)
 
-    prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))
+    prec1, prec5 = utils.accuracy(logits, target, topk=(1, 1))
     n = input.size(0)
     objs.update(loss.data[0], n)
     top1.update(prec1.data[0], n)

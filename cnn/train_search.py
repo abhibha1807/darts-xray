@@ -54,7 +54,7 @@ fh.setFormatter(logging.Formatter(log_format))
 logging.getLogger().addHandler(fh)
 
 
-CIFAR_CLASSES = 10
+CIFAR_CLASSES = 2
 
 
 def main():
