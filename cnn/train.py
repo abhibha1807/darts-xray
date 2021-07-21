@@ -17,6 +17,8 @@ from torch.autograd import Variable
 from model import NetworkCIFAR as Network
 from torchvision import transforms, datasets, models
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
