@@ -19,6 +19,9 @@ from model_search import Network
 from architect import Architect
 
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
