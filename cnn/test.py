@@ -56,8 +56,9 @@ def main():
 
   genotype = eval("genotypes.%s" % args.arch)
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  utils.load(model, './search-EXP-20210721-173438/weights.pt')
   model = model.cuda()
-  utils.load(model, args.model_path)
+  # utils.load(model, args.model_path)
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
 
