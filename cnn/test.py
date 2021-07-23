@@ -12,7 +12,6 @@ import torch.utils
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
 from torchvision import transforms, datasets, models
-
 from torch.autograd import Variable
 # from model import NetworkCIFAR as Network
 from model_search import Network
