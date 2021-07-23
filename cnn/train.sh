@@ -8,6 +8,7 @@ conda info
 which python
 #python /abhibha-volume/darts-xray/cnn/train.py
 #python train_search.py --unrolled
-python visualize.py DARTS
+#python visualize.py DARTS
+python test.py --auxiliary
 
 
