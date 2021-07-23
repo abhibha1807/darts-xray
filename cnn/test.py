@@ -55,7 +55,10 @@ def main():
   logging.info("args = %s", args)
 
   genotype = eval("genotypes.%s" % args.arch)
-  model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  criterion = nn.CrossEntropyLoss()
+  criterion = criterion.cuda()
+  # model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion)
   utils.load(model, './search-EXP-20210721-173438/weights.pt')
   model = model.cuda()
   # utils.load(model, args.model_path)
