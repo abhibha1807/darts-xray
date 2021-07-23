@@ -56,7 +56,7 @@ def main():
 
   genotype = eval("genotypes.%s" % args.arch)
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
-  utils.load(model, './eval-EXP-20210721-090315/weights.pt')
+  utils.load(model, './search-EXP-20210721-173438/weights.pt')
   model = model.cuda()
   # utils.load(model, args.model_path)
 
