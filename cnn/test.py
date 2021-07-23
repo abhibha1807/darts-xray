@@ -13,8 +13,8 @@ import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
 from torchvision import transforms, datasets, models
 from torch.autograd import Variable
-# from model import NetworkCIFAR as Network
-from model_search import Network
+from model import NetworkCIFAR as Network
+# from model_search import Network
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
 parser.add_argument('--batch_size', type=int, default=96, help='batch size')
@@ -55,9 +55,9 @@ def main():
   genotype = eval("genotypes.%s" % args.arch)
   criterion = nn.CrossEntropyLoss()
   criterion = criterion.cuda()
-  # model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
-  model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion)
-  utils.load(model, './search-EXP-20210721-173438/weights.pt')
+  model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  # model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion)
+  utils.load(model, './eval-EXP-20210721-090315/weights.pt')
   model = model.cuda()
   # utils.load(model, args.model_path)
 
