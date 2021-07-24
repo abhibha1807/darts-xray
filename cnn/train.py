@@ -104,7 +104,7 @@ def main():
 }
 
   train_data=data['train']
-  valid_data=data['val']
+  valid_data=data['test']
   num_train = len(train_data)
   num_val=len(valid_data)
   indices = list(range(num_train))
