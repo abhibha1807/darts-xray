@@ -53,7 +53,7 @@ fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
 fh.setFormatter(logging.Formatter(log_format))
 logging.getLogger().addHandler(fh)
 
-CIFAR_CLASSES = 2
+CIFAR_CLASSES = 10
 
 
 def main():
@@ -86,29 +86,29 @@ def main():
       )
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
-  # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  # valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+  train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
+  valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
 
-  datadir=args.data
-  print(datadir)
-  traindir = datadir + '/train/'
-  validdir = datadir + '/val/'
-  testdir = datadir + '/test/'
-  data = {
-  'train':
-  datasets.ImageFolder(root=traindir, transform=train_transform),
-  'val':
-  datasets.ImageFolder(root=validdir, transform=train_transform),
-  'test':
-  datasets.ImageFolder(root=testdir, transform=train_transform)
-}
+#   datadir=args.data
+#   print(datadir)
+#   traindir = datadir + '/train/'
+#   validdir = datadir + '/val/'
+#   testdir = datadir + '/test/'
+#   data = {
+#   'train':
+#   datasets.ImageFolder(root=traindir, transform=train_transform),
+#   'val':
+#   datasets.ImageFolder(root=validdir, transform=train_transform),
+#   'test':
+#   datasets.ImageFolder(root=testdir, transform=train_transform)
+# }
 
-  train_data=data['train']
-  valid_data=data['test']
-  num_train = len(train_data)
-  num_val=len(valid_data)
-  indices = list(range(num_train))
-  indices_val=list(range(num_val))
+#   train_data=data['train']
+#   valid_data=data['test']
+#   num_train = len(train_data)
+#   num_val=len(valid_data)
+#   indices = list(range(num_train))
+#   indices_val=list(range(num_val))
 
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
@@ -121,18 +121,18 @@ def main():
   #   unlabeled_queue = torch.utils.data.DataLoader(u_data, batch_size=args.batch_size,
   #         pin_memory=True, num_workers=0)
 
-  # train_queue = torch.utils.data.DataLoader(
-  #     train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
+  train_queue = torch.utils.data.DataLoader(
+      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
 
-  # valid_queue = torch.utils.data.DataLoader(
-  #     valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+  valid_queue = torch.utils.data.DataLoader(
+      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
   
-  train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-          sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
-          pin_memory=True, num_workers=2)
-  valid_queue = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
-        pin_memory=True, num_workers=2)
+  # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
+  #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
+  #         pin_memory=True, num_workers=2)
+  # valid_queue = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size,
+  #       sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
+  #       pin_memory=True, num_workers=2)
 
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
