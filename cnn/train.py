@@ -199,7 +199,8 @@ def train(train_queue, model, criterion, optimizer):
 
   for step, (input, target) in enumerate(train_queue):
     # input.to(device='cuda', dtype=torch.float)
-    input = Variable(input, dtype=torch.float).cuda()
+    dtype = torch.FloatTensor
+    input = Variable(input).type(dtype).cuda()
     target = Variable(target).cuda(async=True)
 
     optimizer.zero_grad()
@@ -233,7 +234,8 @@ def infer(valid_queue, model, criterion):
 
   for step, (input, target) in enumerate(valid_queue):
     #input.to(device='cuda', dtype=torch.float)
-    input = Variable(input, volatile=True, dtype=torch.float).cuda()
+    dtype = torch.FloatTensor
+    input = Variable(input, volatile=True).type(dtype).cuda()
     target = Variable(target, volatile=True).cuda(async=True)
 
     logits, _ = model(input)
