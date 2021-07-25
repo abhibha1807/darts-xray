@@ -114,27 +114,32 @@ def main():
   final_train_data=[]
   print(dir(train_data))
   # print((train_data[0]))
-  train_data=train_data[0:10]
   print(len(train_data.imgs))
+  c=0
   for i in tqdm(range(len(train_data.imgs))):
+    c=c+1
     final_train_data.append(train_data[i])
     final_train_data.append((rotate(train_data[i][0], angle=45, mode = 'wrap'), train_data[i][1]))
     final_train_data.append((np.fliplr(train_data[i][0]), train_data[i][1]))
     final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
+    if c==10:
+      break
   print(len(final_train_data))
 
   
 
   final_val_data=[]
-  valid_data=valid_data[0:4]
   print(len(valid_data.imgs))
+  c=0
   for i in tqdm(range(len(valid_data.imgs))):
     final_val_data.append(valid_data[i])
     final_val_data.append((rotate(valid_data[i][0], angle=45, mode = 'wrap'), valid_data[i][1]))
     final_val_data.append((np.fliplr(valid_data[i][0]), valid_data[i][1]))
     final_val_data.append((np.flipud(valid_data[i][0]), valid_data[i][1]))
     final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
+    if c==4:
+      break
   print(len(final_val_data))
 
   # final_val_data=final_val_data[0:1]
