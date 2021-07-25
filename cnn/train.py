@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import glob
+from typing import final
 import numpy as np
 import torch
 import utils
@@ -124,6 +125,8 @@ def main():
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
   print(len(final_train_data))
 
+  final_train_data=final_train_data[0:100]
+
   final_val_data=[]
   print(len(valid_data.imgs))
   for i in tqdm(range(len(valid_data.imgs))):
@@ -133,6 +136,8 @@ def main():
     final_val_data.append((np.flipud(valid_data[i][0]), valid_data[i][1]))
     final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
   print(len(final_val_data))
+
+  final_val_data=final_val_data[0:2]
 
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
