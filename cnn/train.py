@@ -114,6 +114,7 @@ def main():
   final_train_data=[]
   print(dir(train_data))
   # print((train_data[0]))
+  train_data=train_data[0:10]
   print(len(train_data.imgs))
   for i in tqdm(range(len(train_data.imgs))):
     final_train_data.append(train_data[i])
@@ -123,9 +124,10 @@ def main():
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
   print(len(final_train_data))
 
-  final_train_data=final_train_data[0:1]
+  
 
   final_val_data=[]
+  valid_data=valid_data[0:4]
   print(len(valid_data.imgs))
   for i in tqdm(range(len(valid_data.imgs))):
     final_val_data.append(valid_data[i])
@@ -135,7 +137,7 @@ def main():
     final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
   print(len(final_val_data))
 
-  final_val_data=final_val_data[0:1]
+  # final_val_data=final_val_data[0:1]
 
   indices = list(range(len(final_train_data)))
   indices_val=list(range(len(final_val_data)))
