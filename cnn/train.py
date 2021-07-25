@@ -114,7 +114,7 @@ def main():
 
   final_train_data=[]
   print(dir(train_data))
-  print((train_data[0]))
+  # print((train_data[0]))
   print(len(train_data.imgs))
   for i in tqdm(range(len(train_data.imgs))):
     final_train_data.append(train_data[i])
