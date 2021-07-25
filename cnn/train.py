@@ -123,7 +123,7 @@ def main():
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
   print(len(final_train_data))
 
-  final_train_data=final_train_data[0:10]
+  final_train_data=final_train_data[0:1]
 
   final_val_data=[]
   print(len(valid_data.imgs))
@@ -135,7 +135,7 @@ def main():
     final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
   print(len(final_val_data))
 
-  final_val_data=final_val_data[0:2]
+  final_val_data=final_val_data[0:1]
 
   indices = list(range(len(final_train_data)))
   indices_val=list(range(len(final_val_data)))
@@ -156,6 +156,9 @@ def main():
 
   # valid_queue = torch.utils.data.DataLoader(
   #     valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+  
+  print('final train len:', len(final_train_data))
+  print('final val len:', len(final_val_data))
   
   train_queue = torch.utils.data.DataLoader(final_train_data, batch_size=args.batch_size,
           sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
@@ -188,7 +191,8 @@ def train(train_queue, model, criterion, optimizer):
   model.train()
 
   for step, (input, target) in enumerate(train_queue):
-    input = Variable(input).cuda()
+    input.to(device='cuda', dtype=torch.float)
+    #input = Variable(input).cuda()
     target = Variable(target).cuda(async=True)
 
     optimizer.zero_grad()
@@ -221,7 +225,8 @@ def infer(valid_queue, model, criterion):
   model.eval()
 
   for step, (input, target) in enumerate(valid_queue):
-    input = Variable(input, volatile=True).cuda()
+    input.to(device='cuda', dtype=torch.float)
+    #input = Variable(input, volatile=True).cuda()
     target = Variable(target, volatile=True).cuda(async=True)
 
     logits, _ = model(input)
