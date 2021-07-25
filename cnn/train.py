@@ -16,7 +16,6 @@ from tqdm import tqdm
 from torch.autograd import Variable
 from model import NetworkCIFAR as Network
 from torchvision import transforms, datasets, models
-from skimage.io import imread, imsave
 from skimage.transform import rotate
 from skimage.util import random_noise
 from skimage.filters import gaussian
@@ -114,13 +113,16 @@ def main():
   indices_val=list(range(num_val))
 
   final_train_data=[]
-  for i in tqdm(range(train_data.shape[0])):
+  print(dir(train_data))
+  print((train_data[0]))
+  print(len(train_data.imgs))
+  for i in tqdm(range(len(train_data.imgs))):
     final_train_data.append(train_data[i])
-    final_train_data.append(rotate(train_data[i], angle=45, mode = 'wrap'))
-    final_train_data.append(np.fliplr(train_data[i]))
-    final_train_data.append(np.flipud(train_data[i]))
-    final_train_data.append(random_noise(train_data[i],var=0.2**2))
-
+    final_train_data.append((rotate(train_data[i][0], angle=45, mode = 'wrap'), train_data[i][1]))
+    final_train_data.append((np.fliplr(train_data[i][0]), train_data[i][1]))
+    final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
+    final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
+  print(len(final_train_data))
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
   #         pin_memory=True, num_workers=2)
@@ -138,12 +140,12 @@ def main():
   valid_queue = torch.utils.data.DataLoader(
       valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
   
-  # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-  #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
-  #         pin_memory=True, num_workers=2)
-  # valid_queue = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size,
-  #       sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
-  #       pin_memory=True, num_workers=2)
+  train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
+          sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
+          pin_memory=True, num_workers=2)
+  valid_queue = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size,
+        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
+        pin_memory=True, num_workers=2)
 
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
