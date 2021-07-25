@@ -12,11 +12,14 @@ import genotypes
 import torch.utils
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
-
+from tqdm import tqdm
 from torch.autograd import Variable
 from model import NetworkCIFAR as Network
 from torchvision import transforms, datasets, models
-
+from skimage.io import imread, imsave
+from skimage.transform import rotate
+from skimage.util import random_noise
+from skimage.filters import gaussian
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -53,7 +56,7 @@ fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
 fh.setFormatter(logging.Formatter(log_format))
 logging.getLogger().addHandler(fh)
 
-CIFAR_CLASSES = 10
+CIFAR_CLASSES = 2
 
 
 def main():
@@ -86,29 +89,37 @@ def main():
       )
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
-  train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+  # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
+  # valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
 
-#   datadir=args.data
-#   print(datadir)
-#   traindir = datadir + '/train/'
-#   validdir = datadir + '/val/'
-#   testdir = datadir + '/test/'
-#   data = {
-#   'train':
-#   datasets.ImageFolder(root=traindir, transform=train_transform),
-#   'val':
-#   datasets.ImageFolder(root=validdir, transform=train_transform),
-#   'test':
-#   datasets.ImageFolder(root=testdir, transform=train_transform)
-# }
+  datadir=args.data
+  print(datadir)
+  traindir = datadir + '/train/'
+  validdir = datadir + '/val/'
+  testdir = datadir + '/test/'
+  data = {
+  'train':
+  datasets.ImageFolder(root=traindir, transform=train_transform),
+  'val':
+  datasets.ImageFolder(root=validdir, transform=train_transform),
+  'test':
+  datasets.ImageFolder(root=testdir, transform=train_transform)
+}
 
-#   train_data=data['train']
-#   valid_data=data['test']
-#   num_train = len(train_data)
-#   num_val=len(valid_data)
-#   indices = list(range(num_train))
-#   indices_val=list(range(num_val))
+  train_data=data['train']
+  valid_data=data['test']
+  num_train = len(train_data)
+  num_val=len(valid_data)
+  indices = list(range(num_train))
+  indices_val=list(range(num_val))
+
+  final_train_data=[]
+  for i in tqdm(range(train_data.shape[0])):
+    final_train_data.append(train_data[i])
+    final_train_data.append(rotate(train_data[i], angle=45, mode = 'wrap'))
+    final_train_data.append(np.fliplr(train_data[i]))
+    final_train_data.append(np.flipud(train_data[i]))
+    final_train_data.append(random_noise(train_data[i],var=0.2**2))
 
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
@@ -122,7 +133,7 @@ def main():
   #         pin_memory=True, num_workers=0)
 
   train_queue = torch.utils.data.DataLoader(
-      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
 
   valid_queue = torch.utils.data.DataLoader(
       valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
