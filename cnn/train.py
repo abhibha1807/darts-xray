@@ -24,7 +24,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=96, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
@@ -109,8 +109,7 @@ def main():
   valid_data=data['val']
   num_train = len(train_data)
   num_val=len(valid_data)
-  indices = list(range(num_train))
-  indices_val=list(range(num_val))
+  
 
   final_train_data=[]
   print(dir(train_data))
@@ -124,7 +123,7 @@ def main():
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
   print(len(final_train_data))
 
-  final_train_data=final_train_data[0:100]
+  final_train_data=final_train_data[0:10]
 
   final_val_data=[]
   print(len(valid_data.imgs))
@@ -137,6 +136,9 @@ def main():
   print(len(final_val_data))
 
   final_val_data=final_val_data[0:2]
+
+  indices = list(range(len(final_train_data)))
+  indices_val=list(range(len(final_val_data)))
 
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
