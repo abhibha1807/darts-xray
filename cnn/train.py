@@ -106,7 +106,7 @@ def main():
 }
 
   train_data=data['train']
-  valid_data=data['test']
+  valid_data=data['val']
   num_train = len(train_data)
   num_val=len(valid_data)
   indices = list(range(num_train))
@@ -123,6 +123,17 @@ def main():
     final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
   print(len(final_train_data))
+
+  final_val_data=[]
+  print(len(valid_data.imgs))
+  for i in tqdm(range(len(valid_data.imgs))):
+    final_val_data.append(valid_data[i])
+    final_val_data.append((rotate(valid_data[i][0], angle=45, mode = 'wrap'), valid_data[i][1]))
+    final_val_data.append((np.fliplr(valid_data[i][0]), valid_data[i][1]))
+    final_val_data.append((np.flipud(valid_data[i][0]), valid_data[i][1]))
+    final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
+  print(len(final_val_data))
+
   # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
   #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
   #         pin_memory=True, num_workers=2)
@@ -134,16 +145,16 @@ def main():
   #   unlabeled_queue = torch.utils.data.DataLoader(u_data, batch_size=args.batch_size,
   #         pin_memory=True, num_workers=0)
 
-  train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
+  # train_queue = torch.utils.data.DataLoader(
+  #     final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
 
-  valid_queue = torch.utils.data.DataLoader(
-      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+  # valid_queue = torch.utils.data.DataLoader(
+  #     valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
   
-  train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
+  train_queue = torch.utils.data.DataLoader(final_train_data, batch_size=args.batch_size,
           sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
           pin_memory=True, num_workers=2)
-  valid_queue = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size,
+  valid_queue = torch.utils.data.DataLoader(final_val_data, batch_size=args.batch_size,
         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
         pin_memory=True, num_workers=2)
 
