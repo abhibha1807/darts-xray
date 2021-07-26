@@ -23,7 +23,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=4, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
@@ -139,7 +139,7 @@ def main():
   for i in range(len(valid_data)):
     c=c+1
     print(valid_data.imgs[i][0])
-    img = Image.open(valid_data.imgs[i][0])
+    img = Image.open(valid_data.imgs[i][0]).convert('RGB')
     final_valid_data.append((transform(center_crop(img)), valid_data.imgs[i][1]))
     if c==10:
       break
