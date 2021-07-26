@@ -23,7 +23,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=8, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
@@ -112,7 +112,7 @@ def main():
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
   print(dir(train_data))
-  center_crop = torchvision.transforms.CenterCrop(size=(100,100))
+  center_crop = torchvision.transforms.CenterCrop(size=(100,200))
   color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
   gray = torchvision.transforms.Grayscale(num_output_channels=1)
   horizontal_flip = torchvision.transforms.RandomHorizontalFlip()
