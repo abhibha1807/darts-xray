@@ -12,13 +12,11 @@ import genotypes
 import torch.utils
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
-from tqdm import tqdm
+
 from torch.autograd import Variable
 from model import NetworkCIFAR as Network
 from torchvision import transforms, datasets, models
-from skimage.transform import rotate
-from skimage.util import random_noise
-from skimage.filters import gaussian
+
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -107,74 +105,12 @@ def main():
 
   train_data=data['train']
   valid_data=data['val']
-  num_train = len(train_data)
-  num_val=len(valid_data)
-  
 
-  final_train_data=[]
-  print(dir(train_data))
-  # print((train_data[0]))
-  print(len(train_data.imgs))
-  c=0
-  for i in tqdm(range(len(train_data.imgs))):
-    # c=c+1
-    final_train_data.append(train_data[i])
-    final_train_data.append((rotate(train_data[i][0], angle=45, mode = 'wrap'), train_data[i][1]))
-    final_train_data.append((np.fliplr(train_data[i][0]), train_data[i][1]))
-    final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
-    final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
-    # if c==5:
-    #   break
-  print(len(final_train_data))
+  train_queue = torch.utils.data.DataLoader(
+      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
 
-  
-
-  final_val_data=[]
-  print(len(valid_data.imgs))
-  c=0
-  for i in tqdm(range(len(valid_data.imgs))):
-    # c=c+1
-    final_val_data.append(valid_data[i])
-    final_val_data.append((rotate(valid_data[i][0], angle=45, mode = 'wrap'), valid_data[i][1]))
-    final_val_data.append((np.fliplr(valid_data[i][0]), valid_data[i][1]))
-    final_val_data.append((np.flipud(valid_data[i][0]), valid_data[i][1]))
-    final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
-    # if c==2:
-    #   break
-  print(len(final_val_data))
-
-  # final_val_data=final_val_data[0:1]
-
-  indices = list(range(len(final_train_data)))
-  indices_val=list(range(len(final_val_data)))
-
-  # train_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-  #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
-  #         pin_memory=True, num_workers=2)
-
-  #   valid_queue = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-  #         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
-  #         pin_memory=True, num_workers=2)
-  #   #  sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
-  #   unlabeled_queue = torch.utils.data.DataLoader(u_data, batch_size=args.batch_size,
-  #         pin_memory=True, num_workers=0)
-
-  # train_queue = torch.utils.data.DataLoader(
-  #     final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
-
-  # valid_queue = torch.utils.data.DataLoader(
-  #     valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
-  
-  print('final train len:', len(final_train_data))
-  print('final val len:', len(final_val_data))
-  
-  train_queue = torch.utils.data.DataLoader(final_train_data, batch_size=args.batch_size,
-          sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]), pin_memory=True,
-           num_workers=2)
-  valid_queue = torch.utils.data.DataLoader(final_val_data, batch_size=args.batch_size,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]), pin_memory=True,
-         num_workers=2)
-
+  valid_queue = torch.utils.data.DataLoader(
+      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
@@ -199,9 +135,7 @@ def train(train_queue, model, criterion, optimizer):
   model.train()
 
   for step, (input, target) in enumerate(train_queue):
-    # input.to(device='cuda', dtype=torch.float)
-    dtype = torch.FloatTensor
-    input = Variable(input).type(dtype).cuda()
+    input = Variable(input).cuda()
     target = Variable(target).cuda(async=True)
 
     optimizer.zero_grad()
@@ -234,9 +168,7 @@ def infer(valid_queue, model, criterion):
   model.eval()
 
   for step, (input, target) in enumerate(valid_queue):
-    #input.to(device='cuda', dtype=torch.float)
-    dtype = torch.FloatTensor
-    input = Variable(input, volatile=True).type(dtype).cuda()
+    input = Variable(input, volatile=True).cuda()
     target = Variable(target, volatile=True).cuda(async=True)
 
     logits, _ = model(input)
