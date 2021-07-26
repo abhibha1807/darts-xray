@@ -116,21 +116,31 @@ def main():
   color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
   gray = torchvision.transforms.Grayscale(num_output_channels=1)
   horizontal_flip = torchvision.transforms.RandomHorizontalFlip()
-
+  transform = torchvision.transforms.Compose([
+    # you can add other transformations in this list
+    transforms.ToTensor()
+])
   final_train_data=[]
+  c=0
   for i in range(len(train_data)):
     print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0])
-    final_train_data.append(color_jitter(img))
+    final_train_data.append(transform(color_jitter(img)))
+
+    if c==10:
+      break
     # final_train_data.append(center_crop(img))
     # final_train_data.append(gray(img))
     # final_train_data.append(horizontal_flip(img))
 
   final_valid_data=[]
+  c=0
   for i in range(len(valid_data)):
     print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0])
-    final_valid_data.append(color_jitter(img))
+    final_valid_data.append(transform(color_jitter(img)))
+    if c==10:
+      break
     # final_valid_data.append(center_crop(img))
     # final_valid_data.append(gray(img))
     # final_valid_data.append(horizontal_flip(img))
