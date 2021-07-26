@@ -44,15 +44,15 @@ parser.add_argument('--arch', type=str, default='DARTS', help='which architectur
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 args = parser.parse_args()
 
-# args.save = 'try2eval-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
-# utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
+args.save = 'try2eval-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
-# log_format = '%(asctime)s %(message)s'
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-#     format=log_format, datefmt='%m/%d %I:%M:%S %p')
-# fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
-# fh.setFormatter(logging.Formatter(log_format))
-# logging.getLogger().addHandler(fh)
+log_format = '%(asctime)s %(message)s'
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+    format=log_format, datefmt='%m/%d %I:%M:%S %p')
+fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
+fh.setFormatter(logging.Formatter(log_format))
+logging.getLogger().addHandler(fh)
 
 CIFAR_CLASSES = 2
 
