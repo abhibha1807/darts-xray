@@ -123,6 +123,7 @@ def main():
   final_train_data=[]
   c=0
   for i in range(len(train_data)):
+    c=c+1
     print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0])
     final_train_data.append(transform(color_jitter(img)))
@@ -136,6 +137,7 @@ def main():
   final_valid_data=[]
   c=0
   for i in range(len(valid_data)):
+    c=c+1
     print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0])
     final_valid_data.append(transform(color_jitter(img)))
