@@ -12,7 +12,8 @@ import genotypes
 import torch.utils
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
-
+import torchvision
+from PIL import Image
 from torch.autograd import Variable
 from model import NetworkCIFAR as Network
 from torchvision import transforms, datasets, models
@@ -43,20 +44,21 @@ parser.add_argument('--arch', type=str, default='DARTS', help='which architectur
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 args = parser.parse_args()
 
-args.save = 'try2eval-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
-utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
+# args.save = 'try2eval-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+# utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
-log_format = '%(asctime)s %(message)s'
-logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-    format=log_format, datefmt='%m/%d %I:%M:%S %p')
-fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
-fh.setFormatter(logging.Formatter(log_format))
-logging.getLogger().addHandler(fh)
+# log_format = '%(asctime)s %(message)s'
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+#     format=log_format, datefmt='%m/%d %I:%M:%S %p')
+# fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
+# fh.setFormatter(logging.Formatter(log_format))
+# logging.getLogger().addHandler(fh)
 
 CIFAR_CLASSES = 2
 
 
 def main():
+  print(os.listdir())
   if not torch.cuda.is_available():
     logging.info('no gpu device available')
     sys.exit(1)
@@ -106,14 +108,44 @@ def main():
   train_data=data['train']
   valid_data=data['val']
 
-  train_queue = torch.utils.data.DataLoader(
-      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
-
-  valid_queue = torch.utils.data.DataLoader(
-      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
-
+ 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
+  print(dir(train_data))
+  center_crop = torchvision.transforms.CenterCrop(size=(200,300))
+  color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
+  gray = torchvision.transforms.Grayscale(num_output_channels=1)
+  horizontal_flip = torchvision.transforms.RandomHorizontalFlip(p=1)
+
+  final_train_data=[]
+  for i in range(len(train_data)):
+    print(train_data.imgs[i][0])
+    img = Image.open(train_data.imgs[i][0])
+    final_train_data.append(color_jitter(img))
+    final_train_data.append(center_crop(img))
+    final_train_data.append(gray(img))
+    final_train_data.append(horizontal_flip(img))
+
+  final_valid_data=[]
+  for i in range(len(valid_data)):
+    print(valid_data.imgs[i][0])
+    img = Image.open(valid_data.imgs[i][0])
+    final_valid_data.append(color_jitter(img))
+    final_valid_data.append(center_crop(img))
+    final_valid_data.append(gray(img))
+    final_valid_data.append(horizontal_flip(img))
+
+
+
+  train_queue = torch.utils.data.DataLoader(
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
+
+  valid_queue = torch.utils.data.DataLoader(
+      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+ 
+  
+  
+  
   for epoch in range(args.epochs):
     scheduler.step()
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
