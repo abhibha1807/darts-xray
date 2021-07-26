@@ -123,7 +123,7 @@ def main():
     final_train_data.append((np.fliplr(train_data[i][0]), train_data[i][1]))
     final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
-    if c==2:
+    if c==5:
       break
   print(len(final_train_data))
 
