@@ -122,18 +122,18 @@ def main():
     print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0])
     final_train_data.append(color_jitter(img))
-    final_train_data.append(center_crop(img))
-    final_train_data.append(gray(img))
-    final_train_data.append(horizontal_flip(img))
+    # final_train_data.append(center_crop(img))
+    # final_train_data.append(gray(img))
+    # final_train_data.append(horizontal_flip(img))
 
   final_valid_data=[]
   for i in range(len(valid_data)):
     print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0])
     final_valid_data.append(color_jitter(img))
-    final_valid_data.append(center_crop(img))
-    final_valid_data.append(gray(img))
-    final_valid_data.append(horizontal_flip(img))
+    # final_valid_data.append(center_crop(img))
+    # final_valid_data.append(gray(img))
+    # final_valid_data.append(horizontal_flip(img))
 
 
 
