@@ -150,10 +150,10 @@ def main():
 
 
   train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2, drop_last=True)
 
   valid_queue = torch.utils.data.DataLoader(
-      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2, drop_last=True)
  
   
   
