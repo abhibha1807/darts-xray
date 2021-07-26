@@ -126,7 +126,7 @@ def main():
     c=c+1
     print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0])
-    final_train_data.append(transform(center_crop(img)))
+    final_train_data.append((transform(center_crop(img)), train_data.imgs[i][1]))
 
     if c==10:
       break
@@ -140,7 +140,7 @@ def main():
     c=c+1
     print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0])
-    final_valid_data.append(transform(center_crop(img)))
+    final_valid_data.append((transform(center_crop(img)), valid_data.imgs[i][1]))
     if c==10:
       break
     # final_valid_data.append(center_crop(img))
