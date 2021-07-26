@@ -115,7 +115,7 @@ def main():
   center_crop = torchvision.transforms.CenterCrop(size=(200,300))
   color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
   gray = torchvision.transforms.Grayscale(num_output_channels=1)
-  horizontal_flip = torchvision.transforms.RandomHorizontalFlip(p=1)
+  horizontal_flip = torchvision.transforms.RandomHorizontalFlip()
 
   final_train_data=[]
   for i in range(len(train_data)):
