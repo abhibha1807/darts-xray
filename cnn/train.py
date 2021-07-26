@@ -125,7 +125,7 @@ def main():
   for i in range(len(train_data)):
     c=c+1
     print(train_data.imgs[i][0])
-    img = Image.open(train_data.imgs[i][0])
+    img = Image.open(train_data.imgs[i][0]).convert('RGB')
     final_train_data.append((transform(center_crop(img)), train_data.imgs[i][1]))
 
     if c==10:
