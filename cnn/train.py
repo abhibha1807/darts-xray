@@ -170,10 +170,10 @@ def main():
   
   train_queue = torch.utils.data.DataLoader(final_train_data, batch_size=args.batch_size,
           sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
-          pin_memory=True, num_workers=2)
+           num_workers=2)
   valid_queue = torch.utils.data.DataLoader(final_val_data, batch_size=args.batch_size,
         sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
-        pin_memory=True, num_workers=2)
+         num_workers=2)
 
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
