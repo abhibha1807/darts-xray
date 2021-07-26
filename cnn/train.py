@@ -24,7 +24,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=2, help='batch size')
+parser.add_argument('--batch_size', type=int, default=96, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
@@ -117,14 +117,14 @@ def main():
   print(len(train_data.imgs))
   c=0
   for i in tqdm(range(len(train_data.imgs))):
-    c=c+1
+    # c=c+1
     final_train_data.append(train_data[i])
     final_train_data.append((rotate(train_data[i][0], angle=45, mode = 'wrap'), train_data[i][1]))
     final_train_data.append((np.fliplr(train_data[i][0]), train_data[i][1]))
     final_train_data.append((np.flipud(train_data[i][0]), train_data[i][1]))
     final_train_data.append((random_noise(train_data[i][0],var=0.2**2), train_data[i][1]))
-    if c==5:
-      break
+    # if c==5:
+    #   break
   print(len(final_train_data))
 
   
@@ -133,14 +133,14 @@ def main():
   print(len(valid_data.imgs))
   c=0
   for i in tqdm(range(len(valid_data.imgs))):
-    c=c+1
+    # c=c+1
     final_val_data.append(valid_data[i])
     final_val_data.append((rotate(valid_data[i][0], angle=45, mode = 'wrap'), valid_data[i][1]))
     final_val_data.append((np.fliplr(valid_data[i][0]), valid_data[i][1]))
     final_val_data.append((np.flipud(valid_data[i][0]), valid_data[i][1]))
     final_val_data.append((random_noise(valid_data[i][0],var=0.2**2), valid_data[i][1]))
-    if c==2:
-      break
+    # if c==2:
+    #   break
   print(len(final_val_data))
 
   # final_val_data=final_val_data[0:1]
@@ -169,10 +169,10 @@ def main():
   print('final val len:', len(final_val_data))
   
   train_queue = torch.utils.data.DataLoader(final_train_data, batch_size=args.batch_size,
-          sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]),
+          sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:]), pin_memory=True,
            num_workers=2)
   valid_queue = torch.utils.data.DataLoader(final_val_data, batch_size=args.batch_size,
-        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]),
+        sampler=torch.utils.data.sampler.SubsetRandomSampler(indices_val[:]), pin_memory=True,
          num_workers=2)
 
 
