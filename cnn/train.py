@@ -133,6 +133,7 @@ def main():
   print(len(valid_data.imgs))
   c=0
   for i in tqdm(range(len(valid_data.imgs))):
+    c=c+1
     final_val_data.append(valid_data[i])
     final_val_data.append((rotate(valid_data[i][0], angle=45, mode = 'wrap'), valid_data[i][1]))
     final_val_data.append((np.fliplr(valid_data[i][0]), valid_data[i][1]))
