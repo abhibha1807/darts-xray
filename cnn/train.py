@@ -112,7 +112,7 @@ def main():
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
   print(dir(train_data))
-  center_crop = torchvision.transforms.CenterCrop(size=(100,200))
+  center_crop = torchvision.transforms.CenterCrop(size=(32,32))
   color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
   gray = torchvision.transforms.Grayscale(num_output_channels=1)
   horizontal_flip = torchvision.transforms.RandomHorizontalFlip()
