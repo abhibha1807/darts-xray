@@ -165,9 +165,11 @@ def main():
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
     model.drop_path_prob = args.drop_path_prob * epoch / args.epochs
     print('called cifar')
-    train_acc, train_obj = train(cifar_queue, model, criterion, optimizer)
+    #train_acc, train_obj = 
+    train(cifar_queue, model, criterion, optimizer)
     print('called train')
-    train_acc, train_obj = train(train_queue, model, criterion, optimizer)
+    #   train_acc, train_obj = 
+    train(train_queue, model, criterion, optimizer)
 
     # logging.info('train_acc %f', train_acc)
 
