@@ -90,7 +90,7 @@ def main():
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
   # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
   valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
-  #valid_data_cifar=valid_data_cifar[0]
+  valid_data_cifar=valid_data_cifar[0]
   len(valid_data_cifar)
   datadir=args.data
   print(datadir)
@@ -122,7 +122,7 @@ def main():
     transforms.ToTensor()
 ])
   final_train_data=[]
-  final_cifar_data=[]
+  # final_cifar_data=[]
   c=0
   for i in range(len(train_data)):
     c=c+1
@@ -130,7 +130,7 @@ def main():
     img = Image.open(train_data.imgs[i][0]).convert('RGB')
     img1 = Image.open(valid_data_cifar.imgs[i][0]).convert('RGB')
     final_train_data.append((transform(center_crop(img)), train_data.imgs[i][1]))
-    final_cifar_data.append((transform(center_crop(img1)), valid_data_cifar.imgs[i][1]))
+    # final_cifar_data.append((transform(center_crop(img1)), valid_data_cifar.imgs[i][1]))
     if c==10:
       break
     # final_train_data.append(center_crop(img))
@@ -159,7 +159,7 @@ def main():
       final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2)
  
   cifar_queue=torch.utils.data.DataLoader(
-      final_cifar_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
+      valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
 
   
   
