@@ -187,7 +187,7 @@ def train(train_queue, model, criterion, optimizer):
     # target = Variable(target).cuda(async=True)
     # target = Variable(target)
 
-    print('shape:', input.shape())
+    print('shape:', input.shape)
     break
 
   #   optimizer.zero_grad()
