@@ -64,22 +64,22 @@ def main():
     sys.exit(1)
 
   np.random.seed(args.seed)
-  # torch.cuda.set_device(args.gpu)
-  # cudnn.benchmark = True
-  # torch.manual_seed(args.seed)
-  # cudnn.enabled=True
-  # torch.cuda.manual_seed(args.seed)
-  # logging.info('gpu device = %d' % args.gpu)
+  torch.cuda.set_device(args.gpu)
+  cudnn.benchmark = True
+  torch.manual_seed(args.seed)
+  cudnn.enabled=True
+  torch.cuda.manual_seed(args.seed)
+  logging.info('gpu device = %d' % args.gpu)
   logging.info("args = %s", args)
 
   genotype = eval("genotypes.%s" % args.arch)
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
-  # model = model.cuda()
+  model = model.cuda()
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
 
   criterion = nn.CrossEntropyLoss()
-  # criterion = criterion.cuda()
+  criterion = criterion.cuda()
   optimizer = torch.optim.SGD(
       model.parameters(),
       args.learning_rate,
@@ -89,7 +89,7 @@ def main():
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
   # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+  # valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
 
   datadir=args.data
   print(datadir)
@@ -150,13 +150,13 @@ def main():
 
   #num_workers=2,
   train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True)
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2,)
 
   valid_queue = torch.utils.data.DataLoader(
-      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True)
+      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2,)
  
-  cifar_queue=torch.utils.data.DataLoader(
-      valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
+  # cifar_queue=torch.utils.data.DataLoader(
+  #     valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
 
   
   
@@ -164,19 +164,19 @@ def main():
     scheduler.step()
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
     model.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    print('called cifar')
+    # print('called cifar')
     #train_acc, train_obj = 
-    train(cifar_queue, model, criterion, optimizer)
+    # train(cifar_queue, model, criterion, optimizer)
     print('called train')
-    #   train_acc, train_obj = 
-    train(train_queue, model, criterion, optimizer)
+   
+    train_acc, train_obj = train(train_queue, model, criterion, optimizer)
 
-    # logging.info('train_acc %f', train_acc)
+    logging.info('train_acc %f', train_acc)
 
-    # valid_acc, valid_obj = infer(valid_queue, model, criterion)
-    # logging.info('valid_acc %f', valid_acc)
+    valid_acc, valid_obj = infer(valid_queue, model, criterion)
+    logging.info('valid_acc %f', valid_acc)
 
-    # utils.save(model, os.path.join(args.save, 'weights.pt'))
+    utils.save(model, os.path.join(args.save, 'weights.pt'))
 
 
 def train(train_queue, model, criterion, optimizer):
@@ -186,35 +186,35 @@ def train(train_queue, model, criterion, optimizer):
   model.train()
 
   for step, (input, target) in enumerate(train_queue):
-    # input = Variable(input).cuda()
-    input = Variable(input)
-    # target = Variable(target).cuda(async=True)
+    input = Variable(input).cuda()
+    # input = Variable(input)
+    target = Variable(target).cuda(async=True)
     # target = Variable(target)
 
     print('shape:', input.shape)
-    break
+    # break
 
-  #   optimizer.zero_grad()
-  #   logits, logits_aux = model(input)
-  #   loss = criterion(logits, target)
-  #   print('train loss:', loss)
-  #   if args.auxiliary:
-  #     loss_aux = criterion(logits_aux, target)
-  #     loss += args.auxiliary_weight*loss_aux
-  #   loss.backward()
-  #   nn.utils.clip_grad_norm(model.parameters(), args.grad_clip)
-  #   optimizer.step()
+    optimizer.zero_grad()
+    logits, logits_aux = model(input)
+    loss = criterion(logits, target)
+    print('train loss:', loss)
+    if args.auxiliary:
+      loss_aux = criterion(logits_aux, target)
+      loss += args.auxiliary_weight*loss_aux
+    loss.backward()
+    nn.utils.clip_grad_norm(model.parameters(), args.grad_clip)
+    optimizer.step()
 
-  #   prec1, prec5 = utils.accuracy(logits, target, topk=(1, 1))
-  #   n = input.size(0)
-  #   objs.update(loss.data[0], n)
-  #   top1.update(prec1.data[0], n)
-  #   top5.update(prec5.data[0], n)
+    prec1, prec5 = utils.accuracy(logits, target, topk=(1, 1))
+    n = input.size(0)
+    objs.update(loss.data[0], n)
+    top1.update(prec1.data[0], n)
+    top5.update(prec5.data[0], n)
 
-  #   if step % args.report_freq == 0:
-  #     logging.info('train %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
+    if step % args.report_freq == 0:
+      logging.info('train %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
 
-  # return top1.avg, objs.avg
+  return top1.avg, objs.avg
 
 
 def infer(valid_queue, model, criterion):
