@@ -3,6 +3,7 @@
 #
 nvidia-smi
 pwd
+ls
 source activate /abhibha-volume/darts
 conda info
 which python
