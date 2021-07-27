@@ -59,9 +59,9 @@ CIFAR_CLASSES = 2
 
 def main():
   print(os.listdir())
-  if not torch.cuda.is_available():
-    logging.info('no gpu device available')
-    sys.exit(1)
+  # if not torch.cuda.is_available():
+  #   logging.info('no gpu device available')
+  #   sys.exit(1)
 
   np.random.seed(args.seed)
   torch.cuda.set_device(args.gpu)
