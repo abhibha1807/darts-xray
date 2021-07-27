@@ -148,15 +148,15 @@ def main():
     # final_valid_data.append(horizontal_flip(img))
 
 
-
+  #num_workers=2,
   train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2, drop_last=True)
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True)
 
   valid_queue = torch.utils.data.DataLoader(
-      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2, drop_last=True)
+      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True)
  
   cifar_queue=torch.utils.data.DataLoader(
-      valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2, drop_last=True)
+      valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
 
   
   
