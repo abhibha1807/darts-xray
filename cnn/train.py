@@ -90,7 +90,7 @@ def main():
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
   # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
   valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
-  valid_data_cifar=valid_data_cifar[0:10]
+  valid_data_cifar=valid_data_cifar[0]
   len(valid_data_cifar)
   datadir=args.data
   print(datadir)
