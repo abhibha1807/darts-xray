@@ -89,9 +89,13 @@ def main():
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
   # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
-  valid_data_cifar=valid_data_cifar[0]
-  len(valid_data_cifar)
+  #valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
+  # valid_data_cifar=valid_data_cifar[0]
+  # print(dir(valid_data_cifar))
+  # print(valid_data_cifar.data[0])
+  # print(valid_data_cifar.targets[0])
+  # valid_data_cifar=valid_data_cifar.data[0:10]
+  #len(valid_data_cifar)
   datadir=args.data
   print(datadir)
   traindir = datadir + '/train/'
@@ -112,7 +116,8 @@ def main():
  
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
-  print(dir(train_data))
+  #print(dir(train_data))
+
   center_crop = torchvision.transforms.CenterCrop(size=(32,32))
   color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
   gray = torchvision.transforms.Grayscale(num_output_channels=1)
@@ -128,9 +133,12 @@ def main():
     c=c+1
     print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0]).convert('RGB')
-    # img1 = Image.open(valid_data_cifar.imgs[i][0]).convert('RGB')
-    final_train_data.append((transform(center_crop(img)), train_data.imgs[i][1]))
-    # final_cifar_data.append((transform(center_crop(img1)), valid_data_cifar.imgs[i][1]))
+    # img1 = Image.open(valid_data_cifar.filename).convert('RGB')
+    img=transform(center_crop(img))
+    img=torch.reshape(img, (32, 32, 3))
+    final_train_data.append((img, train_data.imgs[i][1]))
+    # print(img1)
+    # final_cifar_data.append((transform(center_crop(img1))))
     if c==10:
       break
     # final_train_data.append(center_crop(img))
@@ -143,23 +151,25 @@ def main():
     c=c+1
     print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0]).convert('RGB')
-    final_valid_data.append((transform(center_crop(img)), valid_data.imgs[i][1]))
+    img=transform(center_crop(img))
+    img=torch.reshape(img, (32, 32, 3))
+    final_valid_data.append((img, valid_data.imgs[i][1]))
     if c==10:
       break
     # final_valid_data.append(center_crop(img))
     # final_valid_data.append(gray(img))
     # final_valid_data.append(horizontal_flip(img))
 
-
+  # final_cifar_data.append((torch.tensor(valid_data_cifar.data[0]), 1))
   #num_workers=2,
   train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2)
+      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2,)
 
   valid_queue = torch.utils.data.DataLoader(
-      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2)
+      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2,)
  
-  cifar_queue=torch.utils.data.DataLoader(
-      valid_data_cifar, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
+  # cifar_queue=torch.utils.data.DataLoader(
+      # final_cifar_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
 
   
   
@@ -167,19 +177,19 @@ def main():
     scheduler.step()
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
     model.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    print('called cifar')
+    # print('called cifar')
     #train_acc, train_obj = 
-    train(cifar_queue, model, criterion, optimizer)
+    # train(cifar_queue, model, criterion, optimizer)
     print('called train')
    
     train_acc, train_obj = train(train_queue, model, criterion, optimizer)
 
     logging.info('train_acc %f', train_acc)
 
-    # valid_acc, valid_obj = infer(valid_queue, model, criterion)
-    # logging.info('valid_acc %f', valid_acc)
+    valid_acc, valid_obj = infer(valid_queue, model, criterion)
+    logging.info('valid_acc %f', valid_acc)
 
-    # utils.save(model, os.path.join(args.save, 'weights.pt'))
+    utils.save(model, os.path.join(args.save, 'weights.pt'))
 
 
 def train(train_queue, model, criterion, optimizer):
