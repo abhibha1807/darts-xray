@@ -17,12 +17,12 @@ spec:
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
         workingDir: /abhibha-volume/darts-xray/cnn
-        command: ["/bin/sh", "-c"]
-        args:
-          - for entry in "cnn"/*
-            do
-              echo "$entry"
-            done
+        command: ["bash", "train.sh"]
+        # args:
+        #   - for entry in "cnn"/*
+        #     do
+        #       echo "$entry"
+        #     done
 
         resources:
           requests:
