@@ -139,7 +139,7 @@ def main():
     img=transform(center_crop(img))
     # img=torch.reshape(img, (32, 32, 3))
     # print(torch.tensor([3,1,2]).shape)
-    img.permute(2,1,0)
+    img=img.permute(2,1,0)
     print(img.shape)
     # img=torch.gather(img, 0, torch.tensor([3,1,2]))
     final_train_data.append((img, train_data.imgs[i][1]))
@@ -159,7 +159,7 @@ def main():
     img = Image.open(valid_data.imgs[i][0]).convert('RGB')
     img=transform(center_crop(img))
     # img=torch.reshape(img, (32, 32, 3))
-    img.permute(2,1,0)
+    img=img.permute(2,1,0)
     final_valid_data.append((img, valid_data.imgs[i][1]))
     if c==10:
       break
