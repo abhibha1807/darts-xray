@@ -73,11 +73,11 @@ def main():
   logging.info("args = %s", args)
 
   genotype = eval("genotypes.%s" % args.arch)
-  model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  #model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
   #utils.load(model, '/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu'))
   # model.load_state_dict(torch.load('/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu')))
   # model = torch.jit.load('/Users/abhibhagupta/Desktop/weights.pt')
-  # model=torch.load('/abhibha-volume/darts-xray/cnn/try2eval-EXP-20210730-075228/weights.pt')
+  model=torch.load('/abhibha-volume/darts-xray/cnn/try3eval-EXP-20210730-091045/weights.pt')
   model = model.cuda()
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
@@ -115,7 +115,7 @@ def main():
 }
 
   train_data=data['train']
-  valid_data=data['val']
+  valid_data=data['test']
 
  
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
@@ -196,16 +196,17 @@ def main():
     # train(cifar_queue, model, criterion, optimizer)
     print('called train')
    
-    train_acc, train_obj = train(train_queue, model, criterion, optimizer)
+    # train_acc, train_obj = train(train_queue, model, criterion, optimizer)
 
-    logging.info('train_acc %f', train_acc)
+    # logging.info('train_acc %f', train_acc)
 
     valid_acc, valid_obj = infer(valid_queue, model, criterion)
     logging.info('valid_acc %f', valid_acc)
 
-    print('saving model')
+    print('inference complete')
+    #print('saving model')
     #utils.save(model, os.path.join(args.save, 'weights.pt'))
-    torch.save(model, os.path.join(args.save, 'weights.pt'))
+    #torch.save(model, os.path.join(args.save, 'weights.pt'))
 
 
 def train(train_queue, model, criterion, optimizer):
