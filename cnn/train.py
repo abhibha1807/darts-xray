@@ -203,7 +203,8 @@ def main():
     logging.info('valid_acc %f', valid_acc)
 
     print('saving model')
-    utils.save(model, os.path.join(args.save, 'weights.pt'))
+    #utils.save(model, os.path.join(args.save, 'weights.pt'))
+    torch.save(model, os.path.join(args.save))
 
 
 def train(train_queue, model, criterion, optimizer):
