@@ -241,7 +241,7 @@ def train(train_queue, model, criterion, optimizer):
 
     if step % args.report_freq == 0:
       logging.info('train %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
-
+    break
   return top1.avg, objs.avg
 
 
@@ -266,7 +266,7 @@ def infer(valid_queue, model, criterion):
 
     if step % args.report_freq == 0:
       logging.info('valid %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
-
+    break
   return top1.avg, objs.avg
 
 
