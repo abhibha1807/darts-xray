@@ -23,7 +23,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./data', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
@@ -74,6 +74,9 @@ def main():
 
   genotype = eval("genotypes.%s" % args.arch)
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
+  #utils.load(model, '/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu'))
+  # model.load_state_dict(torch.load('/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu')))
+  # model = torch.jit.load('/Users/abhibhagupta/Desktop/weights.pt')
   model = model.cuda()
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
@@ -111,7 +114,7 @@ def main():
 }
 
   train_data=data['train']
-  valid_data=data['val']
+  valid_data=data['test']
 
  
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
@@ -134,15 +137,17 @@ def main():
   for i in range(len(train_data)):
     c=c+1
     print(train_data.imgs[i][0])
-    img = Image.open(train_data.imgs[i][0]).convert('RGB')
+    img = Image.open(train_data.imgs[i][0])
+    # img = Image.open(train_data.imgs[i][0]).convert('RGB')
     # img1 = Image.open(valid_data_cifar.filename).convert('RGB')
-    img=transform(center_crop(img))
+    # img=transform(center_crop(img))
     # img=torch.reshape(img, (32, 32, 3))
     # print(torch.tensor([3,1,2]).shape)
-    img=img.permute(2,1,0)
-    print(img.shape)
+    # img=img.permute(2,1,0)
+    # print(img.shape)
     # img=torch.gather(img, 0, torch.tensor([3,1,2]))
     final_train_data.append((img, train_data.imgs[i][1]))
+
     # print(img1)
     # final_cifar_data.append((transform(center_crop(img1))))
     if c==10:
@@ -156,10 +161,11 @@ def main():
   for i in range(len(valid_data)):
     c=c+1
     print(valid_data.imgs[i][0])
-    img = Image.open(valid_data.imgs[i][0]).convert('RGB')
-    img=transform(center_crop(img))
+    img = Image.open(valid_data.imgs[i][0])
+    # img = Image.open(valid_data.imgs[i][0]).convert('RGB')
+    # img=transform(center_crop(img))
     # img=torch.reshape(img, (32, 32, 3))
-    img=img.permute(2,1,0)
+    # img=img.permute(2,1,0)
     final_valid_data.append((img, valid_data.imgs[i][1]))
     if c==10:
       break
@@ -196,6 +202,7 @@ def main():
     valid_acc, valid_obj = infer(valid_queue, model, criterion)
     logging.info('valid_acc %f', valid_acc)
 
+    print('saving model')
     utils.save(model, os.path.join(args.save, 'weights.pt'))
 
 
