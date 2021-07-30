@@ -204,7 +204,7 @@ def main():
 
     print('saving model')
     #utils.save(model, os.path.join(args.save, 'weights.pt'))
-    torch.save(model, os.path.join(args.save))
+    torch.save(model)
 
 
 def train(train_queue, model, criterion, optimizer):
