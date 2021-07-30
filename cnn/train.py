@@ -115,7 +115,7 @@ def main():
 }
 
   train_data=data['train']
-  valid_data=data['test']
+  valid_data=data['val']
 
  
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
