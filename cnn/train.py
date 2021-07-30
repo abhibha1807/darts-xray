@@ -137,7 +137,7 @@ def main():
   # train: [1,3,32,32]
   for i in range(len(train_data)):
     c=c+1
-    print(train_data.imgs[i][0])
+    # print(train_data.imgs[i][0])
     img = Image.open(train_data.imgs[i][0])
     # img = Image.open(train_data.imgs[i][0]).convert('RGB')
     # img1 = Image.open(valid_data_cifar.filename).convert('RGB')
@@ -161,7 +161,7 @@ def main():
   c=0
   for i in range(len(valid_data)):
     c=c+1
-    print(valid_data.imgs[i][0])
+    # print(valid_data.imgs[i][0])
     img = Image.open(valid_data.imgs[i][0])
     # img = Image.open(valid_data.imgs[i][0]).convert('RGB')
     # img=transform(center_crop(img))
