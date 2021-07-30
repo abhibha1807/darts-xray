@@ -176,10 +176,10 @@ def main():
   # final_cifar_data.append((torch.tensor(valid_data_cifar.data[0]), 1))
   #num_workers=2,
   train_queue = torch.utils.data.DataLoader(
-      final_train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2,)
+      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2,)
 
   valid_queue = torch.utils.data.DataLoader(
-      final_valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2,)
+      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2,)
  
   # cifar_queue=torch.utils.data.DataLoader(
   #     final_cifar_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
