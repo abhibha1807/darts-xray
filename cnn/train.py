@@ -146,7 +146,7 @@ def main():
     # img=img.permute(2,1,0)
     # print(img.shape)
     # img=torch.gather(img, 0, torch.tensor([3,1,2]))
-    final_train_data.append((img, train_data.imgs[i][1]))
+    final_train_data.append((transform(img), train_data.imgs[i][1]))
 
     # print(img1)
     # final_cifar_data.append((transform(center_crop(img1))))
@@ -166,7 +166,7 @@ def main():
     # img=transform(center_crop(img))
     # img=torch.reshape(img, (32, 32, 3))
     # img=img.permute(2,1,0)
-    final_valid_data.append((img, valid_data.imgs[i][1]))
+    final_valid_data.append((transform(img), valid_data.imgs[i][1]))
     if c==10:
       break
     # final_valid_data.append(center_crop(img))
