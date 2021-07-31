@@ -57,7 +57,7 @@ def main():
   criterion = criterion.cuda()
   model = Network(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
   # model = Network(args.init_channels, CIFAR_CLASSES, args.layers, criterion)
-  utils.load(model, './eval-EXP-20210721-090315/weights.pt')
+  utils.load(model, './try3eval-EXP-20210730-134151/weights.pt')
   model = model.cuda()
   # utils.load(model, args.model_path)
 

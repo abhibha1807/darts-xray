@@ -77,7 +77,7 @@ def main():
   #utils.load(model, '/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu'))
   # model.load_state_dict(torch.load('/Users/abhibhagupta/Desktop/weights.pt', map_location=torch.device('cpu')))
   # model = torch.jit.load('/Users/abhibhagupta/Desktop/weights.pt')
-  model=torch.load('/abhibha-volume/darts-xray/cnn/try3eval-EXP-20210730-091045/weights.pt')
+  model=torch.load('/abhibha-volume/darts-xray/cnn/try3eval-EXP-20210730-134151/weights.pt')
   model = model.cuda()
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
