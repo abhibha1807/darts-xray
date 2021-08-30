@@ -92,14 +92,7 @@ def main():
       )
 
   train_transform, valid_transform = utils._data_transforms_cifar10(args)
-  # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
-  # valid_data_cifar = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
-  # valid_data_cifar=valid_data_cifar[0]
-  # print(dir(valid_data_cifar))
-  # print(valid_data_cifar.data[0])
-  # print(valid_data_cifar.targets[0])
-  # valid_data_cifar=valid_data_cifar.data[0:10]
-  #len(valid_data_cifar)
+
   datadir=args.data
   print(datadir)
   traindir = datadir + '/train/'
@@ -120,80 +113,17 @@ def main():
  
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
 
-  #print(dir(train_data))
-
-  # center_crop = torchvision.transforms.CenterCrop(size=(32,32))
-  # color_jitter = torchvision.transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
-  # gray = torchvision.transforms.Grayscale(num_output_channels=1)
-  # horizontal_flip = torchvision.transforms.RandomHorizontalFlip()
-  transform = torchvision.transforms.Compose([
-    # you can add other transformations in this list
-    transforms.ToTensor()
-])
-  final_train_data=[]
-  final_cifar_data=[]
-  c=0
-  #cifar: [1,32,32,3]
-  # train: [1,3,32,32]
-  for i in range(len(train_data)):
-    c=c+1
-    # print(train_data.imgs[i][0])
-    img = Image.open(train_data.imgs[i][0])
-    # img = Image.open(train_data.imgs[i][0]).convert('RGB')
-    # img1 = Image.open(valid_data_cifar.filename).convert('RGB')
-    # img=transform(center_crop(img))
-    # img=torch.reshape(img, (32, 32, 3))
-    # print(torch.tensor([3,1,2]).shape)
-    # img=img.permute(2,1,0)
-    # print(img.shape)
-    # img=torch.gather(img, 0, torch.tensor([3,1,2]))
-    final_train_data.append((transform(img), train_data.imgs[i][1]))
-
-    # print(img1)
-    # final_cifar_data.append((transform(center_crop(img1))))
-    if c==10:
-      break
-    # final_train_data.append(center_crop(img))
-    # final_train_data.append(gray(img))
-    # final_train_data.append(horizontal_flip(img))
-
-  final_valid_data=[]
-  c=0
-  for i in range(len(valid_data)):
-    c=c+1
-    # print(valid_data.imgs[i][0])
-    img = Image.open(valid_data.imgs[i][0])
-    # img = Image.open(valid_data.imgs[i][0]).convert('RGB')
-    # img=transform(center_crop(img))
-    # img=torch.reshape(img, (32, 32, 3))
-    # img=img.permute(2,1,0)
-    final_valid_data.append((transform(img), valid_data.imgs[i][1]))
-    if c==10:
-      break
-    # final_valid_data.append(center_crop(img))
-    # final_valid_data.append(gray(img))
-    # final_valid_data.append(horizontal_flip(img))
-
-  # final_cifar_data.append((torch.tensor(valid_data_cifar.data[0]), 1))
-  #num_workers=2,
   train_queue = torch.utils.data.DataLoader(
       train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True,  drop_last=True, num_workers=2,)
 
   valid_queue = torch.utils.data.DataLoader(
       valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=2,)
  
-  # cifar_queue=torch.utils.data.DataLoader(
-  #     final_cifar_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, drop_last=True)
-
-  
   
   for epoch in range(args.epochs):
     scheduler.step()
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
     model.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    # print('called cifar')
-    #train_acc, train_obj = 
-    # train(cifar_queue, model, criterion, optimizer)
     print('called train')
    
     train_acc, train_obj = train(train_queue, model, criterion, optimizer)
@@ -216,14 +146,8 @@ def train(train_queue, model, criterion, optimizer):
   model.train()
 
   for step, (input, target) in enumerate(train_queue):
-    # input = Variable(input).cuda()
-    input = Variable(input)
-    # target = Variable(target).cuda(async=True)
-    target = Variable(target)
-
-    # print('shape:', input.shape)
-    # print((input[0].shape))
-    # break
+    input = Variable(input).cuda()
+    target = Variable(target).cuda(async=True)
 
     optimizer.zero_grad()
     logits, logits_aux = model(input)
@@ -269,7 +193,6 @@ def infer(valid_queue, model, criterion):
 
     if step % args.report_freq == 0:
       logging.info('valid %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
-    # break
   return top1.avg, objs.avg
 
 
