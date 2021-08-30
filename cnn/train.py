@@ -124,19 +124,14 @@ def main():
     scheduler.step()
     logging.info('epoch %d lr %e', epoch, scheduler.get_lr()[0])
     model.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    print('called train')
-   
-    train_acc, train_obj = train(train_queue, model, criterion, optimizer)
 
+    train_acc, train_obj = train(train_queue, model, criterion, optimizer)
     logging.info('train_acc %f', train_acc)
 
     valid_acc, valid_obj = infer(valid_queue, model, criterion)
     logging.info('valid_acc %f', valid_acc)
 
-    print('inference complete')
-    print('saving model')
     utils.save(model, os.path.join(args.save, 'weights.pt'))
-    #torch.save(model, os.path.join(args.save, 'weights.pt'))
 
 
 def train(train_queue, model, criterion, optimizer):
@@ -152,7 +147,6 @@ def train(train_queue, model, criterion, optimizer):
     optimizer.zero_grad()
     logits, logits_aux = model(input)
     loss = criterion(logits, target)
-    print('train loss:', loss)
     if args.auxiliary:
       loss_aux = criterion(logits_aux, target)
       loss += args.auxiliary_weight*loss_aux
@@ -168,7 +162,7 @@ def train(train_queue, model, criterion, optimizer):
 
     if step % args.report_freq == 0:
       logging.info('train %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
-    # break
+
   return top1.avg, objs.avg
 
 
@@ -184,7 +178,7 @@ def infer(valid_queue, model, criterion):
 
     logits, _ = model(input)
     loss = criterion(logits, target)
-    print('val loss:', loss)
+
     prec1, prec5 = utils.accuracy(logits, target, topk=(1, 1))
     n = input.size(0)
     objs.update(loss.data[0], n)
@@ -193,8 +187,8 @@ def infer(valid_queue, model, criterion):
 
     if step % args.report_freq == 0:
       logging.info('valid %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
-  return top1.avg, objs.avg
 
+  return top1.avg, objs.avg
 
 if __name__ == '__main__':
   main() 
